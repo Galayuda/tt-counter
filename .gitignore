@@ -1,13 +1,14 @@
-.DS_Store
-.idea
+# Временные файлы симуляции
 *.vcd
-*.fst
-*.fst.hier
-runs
-tt_submission
-src/user_config.json
-src/config_merged.json
-test/sim_build
-test/__pycache__/
-test/results.xml
-test/gate_level_netlist.v
+sim
+*.dump
+
+# Результаты сборки
+runs/
+build/
+work/
+
+# Системные файлы
+.DS_Store
+*.swp
+*~
