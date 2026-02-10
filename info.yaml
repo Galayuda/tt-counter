@@ -4,3 +4,6 @@ project:
   author: "Галаюда Александр"
   clock_hz: 10000000
   top_module: "user_project_wrapper"
+
+# Do not change!
+yaml_version: 6
