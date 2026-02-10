@@ -1,42 +1,76 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+# 4-bit Counter for TinyTapeout
 
-# Tiny Tapeout Verilog Project Template
+A minimal 4-bit synchronous counter designed for the TinyTapeout shuttle program.  
+This project demonstrates a complete digital design flow from Verilog to GDSII-ready layout.
 
-- [Read the documentation for project](docs/info.md)
+ 📌 Project Overview
 
-## What is Tiny Tapeout?
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
 
-To learn more and get started, visit https://tinytapeout.com.
+- **Function**: 4-bit counter with asynchronous active-low reset (`rst_n`)
+- **Technology**: SkyWater 130nm (via TinyTapeout shuttle)
+- **Area**: ~0.01 mm² (fits in 1 shuttle tile)
+- **Cell count**: 10 standard cells after synthesis
+- **Clock frequency**: Tested up to 50 MHz in simulation
 
-## Set up your Verilog project
+ 🔌 Pinout
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
 
-## Enable GitHub actions to build the results page
+| Pin | Direction | Description |
+|-----|-----------|-------------|
+| `clk` | Input | Clock signal (10–50 MHz recommended) |
+| `rst_n` | Input | Active-low asynchronous reset |
+| `io_out[3:0]` | Output | Counter value (bits 3..0) |
+| `io_out[7:4]` | Output | Unused (tied to 0) |
+| `io_in[7:0]` | Input | Unused (high-Z) |
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
 
-## Resources
 
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
+ 🧪 Verification
 
-## What next?
 
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+Simulation (using Icarus Verilog)
+
+iverilog src/counter.v rtl/user_project_wrapper.v tb_counter.v -o sim
+
+vvp sim
+
+gtkwave counter.vcd
+
+View waveform
+
+Synthesis (Yosys via OpenLane container)
+
+docker run --rm -v $(pwd):/work efabless/openlane:rc6 sh -c "
+
+  cd /work &&
+
+  yosys -p 'read_verilog src/counter.v; read_verilog rtl/user_project_wrapper.v; synth -top user_project_wrapper; stat'
+
+"
+
+
+
+Expected result: 10 cells (4× DFF with async reset + 6× logic gates).
+
+
+📦 Shuttle Submission
+
+Shuttle: sky130 (ChipFoundry)
+Design type: digital
+Tiles required: 1
+Author: Galayuda
+Repository: https://github.com/Galayuda/tt-counter
+
+📚 Documentation
+
+Full pin description and usage examples:
+
+→ docs/datasheet.md
+
+📄 License
+
+Apache License 2.0 — see LICENSE
+
+
